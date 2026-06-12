@@ -2,6 +2,7 @@ import os
 import sys
 import torch
 import torch.nn as nn
+from torchvision.utils import save_image
 
 PROJECT_ROOT = os.path.dirname(
     os.path.dirname(
@@ -34,11 +35,33 @@ DEVICE = (
     else "cpu"
 )
 
-EPOCHS = 5
+EPOCHS = 100
 
 BATCH_SIZE = 1
 
 LR = 1e-4
+
+SAVE_EVERY = 10
+
+OUTPUT_DIR = os.path.join(
+    PROJECT_ROOT,
+    "outputs"
+)
+
+CHECKPOINT_DIR = os.path.join(
+    PROJECT_ROOT,
+    "checkpoints"
+)
+
+os.makedirs(
+    OUTPUT_DIR,
+    exist_ok=True
+)
+
+os.makedirs(
+    CHECKPOINT_DIR,
+    exist_ok=True
+)
 
 
 # --------------------------
@@ -59,6 +82,18 @@ loader = DataLoader(
     dataset,
     batch_size=BATCH_SIZE,
     shuffle=True
+)
+
+preview_loader = DataLoader(
+    dataset,
+    batch_size=1,
+    shuffle=False
+)
+
+preview_batch = next(
+    iter(
+        preview_loader
+    )
 )
 
 print(
@@ -160,14 +195,44 @@ for epoch in range(EPOCHS):
         f"Loss: {avg_loss:.6f}"
     )
 
-    # save checkpoint
+    # save checkpoint and sample output
 
-    if (epoch + 1) % 10 == 0:
+    if (epoch + 1) % SAVE_EVERY == 0:
 
         torch.save(
             model.state_dict(),
-            f"checkpoint_epoch_{epoch+1}.pth"
+            os.path.join(
+                CHECKPOINT_DIR,
+                f"checkpoint_epoch_{epoch+1}.pth"
+            )
         )
+
+        model.eval()
+
+        with torch.no_grad():
+
+            preview_output = model(
+                preview_batch["person"].to(
+                    DEVICE
+                ),
+                preview_batch["cloth"].to(
+                    DEVICE
+                ),
+                preview_batch["pose"].to(
+                    DEVICE
+                )
+            )
+
+            save_image(
+                preview_output.cpu().clamp(
+                    0,
+                    1
+                ),
+                os.path.join(
+                    OUTPUT_DIR,
+                    f"epoch_{epoch+1}.png"
+                )
+            )
 
 print()
 
