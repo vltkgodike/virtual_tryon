@@ -26,7 +26,7 @@ from models.full_vton import FullVTON
 # CONFIG
 # --------------------------
 
-ROOT_DIR = r"C:\Users\valkontek 010\Downloads\VTON-HD"
+ROOT_DIR = r"/kaggle/input/datasets/adarshsingh0903/virtual-tryon-dataset/Virtual tryon data/"
 
 DEVICE = (
     "cuda"

@@ -12,7 +12,7 @@ class VITONDataset(Dataset):
     def __init__(
         self,
         root_dir,
-        pair_file="train_pairs.txt",
+        pair_file="/kaggle/input/datasets/adarshsingh0903/virtual-tryon-dataset/Virtual tryon data/train_pairs.txt",
         image_size=256
     ):
 
