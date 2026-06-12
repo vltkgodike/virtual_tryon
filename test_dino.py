@@ -6,6 +6,7 @@ from models.dino_encoder import (
     DINOEncoder
 )
 
+from models.fusion_block import FusionBlock
 from models.pose_encoder import (
     PoseEncoder
 )
@@ -81,6 +82,7 @@ print(
 print(
     fused_tokens.shape
 )
+from models.spatial_mapper import DINOFeatureMapper
 from models.token_compressor import (
     TokenCompressor
 )
@@ -159,4 +161,34 @@ print("Output shape:")
 
 print(
     output.shape
+)
+
+
+mapper = DINOFeatureMapper()
+
+person_map = mapper(person_tokens)
+cloth_map = mapper(cloth_tokens)
+pose_map = mapper(pose_tokens)
+print(person_map.shape)
+
+fusion = FusionBlock()
+
+out = fusion(
+    person_map,
+    cloth_map,
+    pose_map
+)
+
+print(out.shape)
+print(",,,,,,,,,,,,,,,,,,,,,,,,,,,")
+print(
+    out.min().item()
+)
+
+print(
+    out.max().item()
+)
+
+print(
+    out.mean().item()
 )
